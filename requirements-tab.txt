@@ -1,0 +1,10 @@
+catboost==1.2.10
+lightgbm==4.6.0
+numpy==2.4.6
+pandas==3.0.3
+scikit-learn==1.9.0
+tabicl==2.1.1
+tabpfn==8.0.8
+tabpfn-common-utils==0.2.23
+torch==2.13.0
+xgboost==3.2.0
