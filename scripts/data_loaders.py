@@ -82,3 +82,22 @@ def load_kepco() -> pd.Series:
 
 
 LOADERS["kepco"] = load_kepco
+
+
+def load_gift_electricity(item_idx: int = 0) -> pd.Series:
+    """GIFT-Eval 「평가 과제」 electricity/H (브릿지스펙 §1: M1 벤치마크측 = 시험지).
+    ⚠️ GiftEvalPretrain(교재)와 혼동 금지 — 이건 모델들이 성능을 보고한 평가 벤치마크다.
+    단일 계열(item 0) 사용: KPX·aus_elec0과 동일한 단일계열 프로토콜 유지 (집계는 과제 변형이라 금지)."""
+    from huggingface_hub import snapshot_download
+    from datasets import load_from_disk
+
+    local = snapshot_download(repo_id="Salesforce/GiftEval", repo_type="dataset",
+                              allow_patterns="electricity/H/*")
+    ds = load_from_disk(f"{local}/electricity/H")
+    rec = ds[item_idx]
+    idx = pd.date_range(rec["start"], periods=len(rec["target"]), freq="h")
+    s = pd.Series(rec["target"], index=idx, name=f"gift_electricity_H_{rec['item_id']}")
+    return _common_preprocess(s).dropna()
+
+
+LOADERS["gift_elec"] = load_gift_electricity
